@@ -18,6 +18,14 @@ pipeline {
                     echo 'Tool: JUnit for Unit Tests, TestNG for Integration Tests'
                 }
             }
+            post {
+                always {
+                    mail to: "angelo.mouzouris@gmail.com",
+                         subject: "Unit and Integration Tests - Result",
+                         body: "The stage has completed with status: ${currentBuild.currentResult}.",
+                         attachLog: true
+                }
+            }
         }
 
         stage('Code Analysis') {
@@ -34,6 +42,14 @@ pipeline {
                 script {
                     echo 'Stage 4: Performing Security Scan...'
                     echo 'Tool: OWASP Dependency-Check'
+                }
+            }
+            post {
+                always {
+                    mail to: "angelo.mouzouris@gmail.com",
+                         subject: "Security Scan - Result",
+                         body: "The stage has completed with status: ${currentBuild.currentResult}.",
+                         attachLog: true
                 }
             }
         }
@@ -63,6 +79,22 @@ pipeline {
                     echo 'Tool: AWS CLI for deploying to an AWS EC2 instance'
                 }
             }
+        }
+    }
+    
+    post {
+        always {
+            echo 'This will always run after all stages.'
+        }
+        success {
+            mail to: "angelo.mouzouris@gmail.com",
+                 subject: "Pipeline Success",
+                 body: "The pipeline completed successfully."
+        }
+        failure {
+            mail to: "angelo.mouzouris@gmail.com",
+                 subject: "Pipeline Failure",
+                 body: "The pipeline failed."
         }
     }
 }
