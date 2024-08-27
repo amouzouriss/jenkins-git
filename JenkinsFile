@@ -20,10 +20,10 @@ pipeline {
             }
             post {
                 always {
-                    mail to: "angelo.mouzouris@gmail.com",
-                         subject: "Unit and Integration Tests - Result",
-                         body: "The stage has completed with status: ${currentBuild.currentResult}.",
-                         attachLog: true
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Unit and Integration Tests - Result",
+                             body: "The stage has completed with status: ${currentBuild.currentResult}."
                 }
             }
         }
@@ -46,10 +46,10 @@ pipeline {
             }
             post {
                 always {
-                    mail to: "angelo.mouzouris@gmail.com",
-                         subject: "Security Scan - Result",
-                         body: "The stage has completed with status: ${currentBuild.currentResult}.",
-                         attachLog: true
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Security Scan - Result",
+                             body: "The stage has completed with status: ${currentBuild.currentResult}."
                 }
             }
         }
@@ -87,14 +87,14 @@ pipeline {
             echo 'This will always run after all stages.'
         }
         success {
-            mail to: "angelo.mouzouris@gmail.com",
-                 subject: "Pipeline Success",
-                 body: "The pipeline completed successfully."
+            emailext to: "angelo.mouzouris@gmail.com",
+                     subject: "Pipeline Success",
+                     body: "The pipeline completed successfully."
         }
         failure {
-            mail to: "angelo.mouzouris@gmail.com",
-                 subject: "Pipeline Failure",
-                 body: "The pipeline failed."
+            emailext to: "angelo.mouzouris@gmail.com",
+                     subject: "Pipeline Failure",
+                     body: "The pipeline failed."
         }
     }
 }
