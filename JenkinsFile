@@ -32,7 +32,13 @@ pipeline {
             }
             post {
                 always {
+                    // Capture the logs manually in case attachLog fails
+                    script {
+                        def logFile = "${env.WORKSPACE}/unit-integration-tests.log"
+                        writeFile file: logFile, text: currentBuild.rawBuild.getLog(1000).join("\n")
+                    }
                     emailext attachLog: true,
+                             attachmentsPattern: 'unit-integration-tests.log',
                              to: "angelo.mouzouris@gmail.com",
                              subject: "Unit and Integration Tests - ${currentBuild.currentResult}",
                              body: """
@@ -63,7 +69,13 @@ pipeline {
             }
             post {
                 always {
+                    // Capture the logs manually in case attachLog fails
+                    script {
+                        def logFile = "${env.WORKSPACE}/security-scan.log"
+                        writeFile file: logFile, text: currentBuild.rawBuild.getLog(1000).join("\n")
+                    }
                     emailext attachLog: true,
+                             attachmentsPattern: 'security-scan.log',
                              to: "angelo.mouzouris@gmail.com",
                              subject: "Security Scan - ${currentBuild.currentResult}",
                              body: """
