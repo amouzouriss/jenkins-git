@@ -11,14 +11,16 @@ pipeline {
             }
             post {
                 success {
-                    mail to: "angelo.mouzouris@gmail.com",
-                         subject: "Build Status Email - Success",
-                         body: "The build was successful."
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Build Status Email - Success",
+                             body: "The build was successful. Check the attached log for details."
                 }
                 failure {
-                    mail to: "angelo.mouzouris@gmail.com",
-                         subject: "Build Status Email - Failure",
-                         body: "The build failed."
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Build Status Email - Failure",
+                             body: "The build failed. Check the attached log for details."
                 }
             }
         }
@@ -32,20 +34,12 @@ pipeline {
             }
             post {
                 always {
-                    // Capture the logs manually in case attachLog fails
-                    script {
-                        def logFile = "${env.WORKSPACE}/unit-integration-tests.log"
-                        writeFile file: logFile, text: currentBuild.rawBuild.getLog(1000).join("\n")
-                    }
                     emailext attachLog: true,
-                             attachmentsPattern: 'unit-integration-tests.log',
                              to: "angelo.mouzouris@gmail.com",
                              subject: "Unit and Integration Tests - ${currentBuild.currentResult}",
                              body: """
                              The stage 'Unit and Integration Tests' has completed with status: ${currentBuild.currentResult}.
-                             Job: ${env.JOB_NAME}
-                             Build Number: ${env.BUILD_NUMBER}
-                             More info at: ${env.BUILD_URL}
+                             Check the attached log for details.
                              """
                 }
             }
@@ -69,20 +63,12 @@ pipeline {
             }
             post {
                 always {
-                    // Capture the logs manually in case attachLog fails
-                    script {
-                        def logFile = "${env.WORKSPACE}/security-scan.log"
-                        writeFile file: logFile, text: currentBuild.rawBuild.getLog(1000).join("\n")
-                    }
                     emailext attachLog: true,
-                             attachmentsPattern: 'security-scan.log',
                              to: "angelo.mouzouris@gmail.com",
                              subject: "Security Scan - ${currentBuild.currentResult}",
                              body: """
                              The stage 'Security Scan' has completed with status: ${currentBuild.currentResult}.
-                             Job: ${env.JOB_NAME}
-                             Build Number: ${env.BUILD_NUMBER}
-                             More info at: ${env.BUILD_URL}
+                             Check the attached log for details.
                              """
                 }
             }
@@ -121,14 +107,16 @@ pipeline {
             echo 'This will always run after all stages.'
         }
         success {
-            mail to: "angelo.mouzouris@gmail.com",
-                 subject: "Pipeline Success",
-                 body: "The pipeline completed successfully."
+            emailext attachLog: true,
+                     to: "angelo.mouzouris@gmail.com",
+                     subject: "Pipeline Success",
+                     body: "The pipeline completed successfully. Check the attached log for details."
         }
         failure {
-            mail to: "angelo.mouzouris@gmail.com",
-                 subject: "Pipeline Failure",
-                 body: "The pipeline failed."
+            emailext attachLog: true,
+                     to: "angelo.mouzouris@gmail.com",
+                     subject: "Pipeline Failure",
+                     body: "The pipeline failed. Check the attached log for details."
         }
     }
 }
