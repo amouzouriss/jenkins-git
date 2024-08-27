@@ -6,55 +6,42 @@ pipeline {
             steps {
                 script {
                     echo 'Stage 1: Building the code...'
-                    echo 'Tool: Maven'
+                    writeFile file: 'build.log', text: 'This is a small log file.'
                 }
             }
             post {
                 success {
-                    emailext to: "angelo.mouzouris@gmail.com",
+                    emailext attachmentsPattern: 'build.log',
+                             to: "angelo.mouzouris@gmail.com",
                              subject: "Build Status Email - Success",
-                             body: "The build was successful."
+                             body: "The build was successful. Check the attached log for details."
                 }
                 failure {
-                    emailext to: "angelo.mouzouris@gmail.com",
+                    emailext attachmentsPattern: 'build.log',
+                             to: "angelo.mouzouris@gmail.com",
                              subject: "Build Status Email - Failure",
-                             body: "The build failed."
+                             body: "The build failed. Check the attached log for details."
                 }
             }
         }
         
-        stage('Unit and Integration Tests') {
-            steps {
-                script {
-                    echo 'Stage 2: Running Unit and Integration Tests...'
-                    echo 'Tool: JUnit for Unit Tests, TestNG for Integration Tests'
-                }
-            }
-            post {
-                always {
-                    emailext to: "angelo.mouzouris@gmail.com",
-                             subject: "Unit and Integration Tests - ${currentBuild.currentResult}",
-                             body: "The stage 'Unit and Integration Tests' has completed with status: ${currentBuild.currentResult}."
-                }
-            }
+        // Other stages here...
+
+    }
+    
+    post {
+        always {
+            echo 'This will always run after all stages.'
         }
-
-        // Additional stages...
-
-        post {
-            always {
-                echo 'This will always run after all stages.'
-            }
-            success {
-                emailext to: "angelo.mouzouris@gmail.com",
-                         subject: "Pipeline Success",
-                         body: "The pipeline completed successfully."
-            }
-            failure {
-                emailext to: "angelo.mouzouris@gmail.com",
-                         subject: "Pipeline Failure",
-                         body: "The pipeline failed."
-            }
+        success {
+            emailext to: "angelo.mouzouris@gmail.com",
+                     subject: "Pipeline Success",
+                     body: "The pipeline completed successfully."
+        }
+        failure {
+            emailext to: "angelo.mouzouris@gmail.com",
+                     subject: "Pipeline Failure",
+                     body: "The pipeline failed."
         }
     }
 }
