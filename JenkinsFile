@@ -11,16 +11,14 @@ pipeline {
             }
             post {
                 success {
-                    emailext attachLog: true,
-                             to: "angelo.mouzouris@gmail.com",
+                    emailext to: "angelo.mouzouris@gmail.com",
                              subject: "Build Status Email - Success",
-                             body: "The build was successful. Check the attached log for details."
+                             body: "The build was successful."
                 }
                 failure {
-                    emailext attachLog: true,
-                             to: "angelo.mouzouris@gmail.com",
+                    emailext to: "angelo.mouzouris@gmail.com",
                              subject: "Build Status Email - Failure",
-                             body: "The build failed. Check the attached log for details."
+                             body: "The build failed."
                 }
             }
         }
@@ -34,89 +32,29 @@ pipeline {
             }
             post {
                 always {
-                    emailext attachLog: true,
-                             to: "angelo.mouzouris@gmail.com",
+                    emailext to: "angelo.mouzouris@gmail.com",
                              subject: "Unit and Integration Tests - ${currentBuild.currentResult}",
-                             body: """
-                             The stage 'Unit and Integration Tests' has completed with status: ${currentBuild.currentResult}.
-                             Check the attached log for details.
-                             """
+                             body: "The stage 'Unit and Integration Tests' has completed with status: ${currentBuild.currentResult}."
                 }
             }
         }
 
-        stage('Code Analysis') {
-            steps {
-                script {
-                    echo 'Stage 3: Analyzing Code...'
-                    echo 'Tool: SonarQube'
-                }
-            }
-        }
+        // Additional stages...
 
-        stage('Security Scan') {
-            steps {
-                script {
-                    echo 'Stage 4: Performing Security Scan...'
-                    echo 'Tool: OWASP Dependency-Check'
-                }
+        post {
+            always {
+                echo 'This will always run after all stages.'
             }
-            post {
-                always {
-                    emailext attachLog: true,
-                             to: "angelo.mouzouris@gmail.com",
-                             subject: "Security Scan - ${currentBuild.currentResult}",
-                             body: """
-                             The stage 'Security Scan' has completed with status: ${currentBuild.currentResult}.
-                             Check the attached log for details.
-                             """
-                }
+            success {
+                emailext to: "angelo.mouzouris@gmail.com",
+                         subject: "Pipeline Success",
+                         body: "The pipeline completed successfully."
             }
-        }
-
-        stage('Deploy to Staging') {
-            steps {
-                script {
-                    echo 'Stage 5: Deploying to Staging...'
-                    echo 'Tool: AWS CLI for deploying to an AWS EC2 instance'
-                }
+            failure {
+                emailext to: "angelo.mouzouris@gmail.com",
+                         subject: "Pipeline Failure",
+                         body: "The pipeline failed."
             }
-        }
-
-        stage('Integration Tests on Staging') {
-            steps {
-                script {
-                    echo 'Stage 6: Running Integration Tests on Staging...'
-                    echo 'Tool: Selenium'
-                }
-            }
-        }
-
-        stage('Deploy to Production') {
-            steps {
-                script {
-                    echo 'Stage 7: Deploying to Production...'
-                    echo 'Tool: AWS CLI for deploying to an AWS EC2 instance'
-                }
-            }
-        }
-    }
-    
-    post {
-        always {
-            echo 'This will always run after all stages.'
-        }
-        success {
-            emailext attachLog: true,
-                     to: "angelo.mouzouris@gmail.com",
-                     subject: "Pipeline Success",
-                     body: "The pipeline completed successfully. Check the attached log for details."
-        }
-        failure {
-            emailext attachLog: true,
-                     to: "angelo.mouzouris@gmail.com",
-                     subject: "Pipeline Failure",
-                     body: "The pipeline failed. Check the attached log for details."
         }
     }
 }
