@@ -30,6 +30,19 @@ pipeline {
                     echo 'Tool: JUnit for Unit Tests, TestNG for Integration Tests'
                 }
             }
+            post {
+                always {
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Unit and Integration Tests - ${currentBuild.currentResult}",
+                             body: """
+                             The stage 'Unit and Integration Tests' has completed with status: ${currentBuild.currentResult}.
+                             Job: ${env.JOB_NAME}
+                             Build Number: ${env.BUILD_NUMBER}
+                             More info at: ${env.BUILD_URL}
+                             """
+                }
+            }
         }
 
         stage('Code Analysis') {
@@ -46,6 +59,19 @@ pipeline {
                 script {
                     echo 'Stage 4: Performing Security Scan...'
                     echo 'Tool: OWASP Dependency-Check'
+                }
+            }
+            post {
+                always {
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Security Scan - ${currentBuild.currentResult}",
+                             body: """
+                             The stage 'Security Scan' has completed with status: ${currentBuild.currentResult}.
+                             Job: ${env.JOB_NAME}
+                             Build Number: ${env.BUILD_NUMBER}
+                             More info at: ${env.BUILD_URL}
+                             """
                 }
             }
         }
