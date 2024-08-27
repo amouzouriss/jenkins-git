@@ -9,6 +9,18 @@ pipeline {
                     echo 'Tool: Maven'
                 }
             }
+            post {
+                success {
+                    mail to: "angelo.mouzouris@gmail.com",
+                         subject: "Build Status Email - Success",
+                         body: "The build was successful."
+                }
+                failure {
+                    mail to: "angelo.mouzouris@gmail.com",
+                         subject: "Build Status Email - Failure",
+                         body: "The build failed."
+                }
+            }
         }
         
         stage('Unit and Integration Tests') {
@@ -16,14 +28,6 @@ pipeline {
                 script {
                     echo 'Stage 2: Running Unit and Integration Tests...'
                     echo 'Tool: JUnit for Unit Tests, TestNG for Integration Tests'
-                }
-            }
-            post {
-                always {
-                    emailext attachLog: true,
-                             to: "angelo.mouzouris@gmail.com",
-                             subject: "Unit and Integration Tests - Result",
-                             body: "The stage has completed with status: ${currentBuild.currentResult}."
                 }
             }
         }
@@ -42,14 +46,6 @@ pipeline {
                 script {
                     echo 'Stage 4: Performing Security Scan...'
                     echo 'Tool: OWASP Dependency-Check'
-                }
-            }
-            post {
-                always {
-                    emailext attachLog: true,
-                             to: "angelo.mouzouris@gmail.com",
-                             subject: "Security Scan - Result",
-                             body: "The stage has completed with status: ${currentBuild.currentResult}."
                 }
             }
         }
@@ -87,14 +83,14 @@ pipeline {
             echo 'This will always run after all stages.'
         }
         success {
-            emailext to: "angelo.mouzouris@gmail.com",
-                     subject: "Pipeline Success",
-                     body: "The pipeline completed successfully."
+            mail to: "angelo.mouzouris@gmail.com",
+                 subject: "Pipeline Success",
+                 body: "The pipeline completed successfully."
         }
         failure {
-            emailext to: "angelo.mouzouris@gmail.com",
-                     subject: "Pipeline Failure",
-                     body: "The pipeline failed."
+            mail to: "angelo.mouzouris@gmail.com",
+                 subject: "Pipeline Failure",
+                 body: "The pipeline failed."
         }
     }
 }
