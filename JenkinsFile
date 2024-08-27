@@ -20,10 +20,12 @@ pipeline {
             }
             post {
                 always {
-                    mail to: "angelo.mouzouris@gmail.com",
-                         subject: "Unit and Integration Tests - Result",
-                         body: "The stage has completed with status: ${currentBuild.currentResult}.",
-                         attachLog: true
+                    script {
+                        def logContent = currentBuild.rawBuild.getLog(100).join("\n")
+                        mail to: "angelo.mouzouris@gmail.com",
+                             subject: "Unit and Integration Tests - Result",
+                             body: "The stage has completed with status: ${currentBuild.currentResult}.\n\nLogs:\n${logContent}"
+                    }
                 }
             }
         }
@@ -46,10 +48,12 @@ pipeline {
             }
             post {
                 always {
-                    mail to: "angelo.mouzouris@gmail.com",
-                         subject: "Security Scan - Result",
-                         body: "The stage has completed with status: ${currentBuild.currentResult}.",
-                         attachLog: true
+                    script {
+                        def logContent = currentBuild.rawBuild.getLog(100).join("\n")
+                        mail to: "angelo.mouzouris@gmail.com",
+                             subject: "Security Scan - Result",
+                             body: "The stage has completed with status: ${currentBuild.currentResult}.\n\nLogs:\n${logContent}"
+                    }
                 }
             }
         }
