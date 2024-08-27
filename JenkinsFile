@@ -11,14 +11,16 @@ pipeline {
             }
             post {
                 success {
-                    mail to: "angelo.mouzouris@gmail.com",
-                         subject: "Build Status Email - Success",
-                         body: "The build was successful."
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Build Status Email - Success",
+                             body: "The build was successful. Check the attached log for details."
                 }
                 failure {
-                    mail to: "angelo.mouzouris@gmail.com",
-                         subject: "Build Status Email - Failure",
-                         body: "The build failed."
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Build Status Email - Failure",
+                             body: "The build failed. Check the attached log for details."
                 }
             }
         }
@@ -30,6 +32,17 @@ pipeline {
                     echo 'Tool: JUnit for Unit Tests, TestNG for Integration Tests'
                 }
             }
+            post {
+                always {
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Unit and Integration Tests - ${currentBuild.currentResult}",
+                             body: """
+                             The stage 'Unit and Integration Tests' completed with status: ${currentBuild.currentResult}.
+                             Check the attached log for details.
+                             """
+                }
+            }
         }
 
         stage('Code Analysis') {
@@ -37,6 +50,17 @@ pipeline {
                 script {
                     echo 'Stage 3: Analyzing Code...'
                     echo 'Tool: SonarQube'
+                }
+            }
+            post {
+                always {
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Code Analysis - ${currentBuild.currentResult}",
+                             body: """
+                             The stage 'Code Analysis' completed with status: ${currentBuild.currentResult}.
+                             Check the attached log for details.
+                             """
                 }
             }
         }
@@ -48,6 +72,17 @@ pipeline {
                     echo 'Tool: OWASP Dependency-Check'
                 }
             }
+            post {
+                always {
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Security Scan - ${currentBuild.currentResult}",
+                             body: """
+                             The stage 'Security Scan' completed with status: ${currentBuild.currentResult}.
+                             Check the attached log for details.
+                             """
+                }
+            }
         }
 
         stage('Deploy to Staging') {
@@ -55,6 +90,17 @@ pipeline {
                 script {
                     echo 'Stage 5: Deploying to Staging...'
                     echo 'Tool: AWS CLI for deploying to an AWS EC2 instance'
+                }
+            }
+            post {
+                always {
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Deploy to Staging - ${currentBuild.currentResult}",
+                             body: """
+                             The stage 'Deploy to Staging' completed with status: ${currentBuild.currentResult}.
+                             Check the attached log for details.
+                             """
                 }
             }
         }
@@ -66,6 +112,17 @@ pipeline {
                     echo 'Tool: Selenium'
                 }
             }
+            post {
+                always {
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Integration Tests on Staging - ${currentBuild.currentResult}",
+                             body: """
+                             The stage 'Integration Tests on Staging' completed with status: ${currentBuild.currentResult}.
+                             Check the attached log for details.
+                             """
+                }
+            }
         }
 
         stage('Deploy to Production') {
@@ -73,6 +130,17 @@ pipeline {
                 script {
                     echo 'Stage 7: Deploying to Production...'
                     echo 'Tool: AWS CLI for deploying to an AWS EC2 instance'
+                }
+            }
+            post {
+                always {
+                    emailext attachLog: true,
+                             to: "angelo.mouzouris@gmail.com",
+                             subject: "Deploy to Production - ${currentBuild.currentResult}",
+                             body: """
+                             The stage 'Deploy to Production' completed with status: ${currentBuild.currentResult}.
+                             Check the attached log for details.
+                             """
                 }
             }
         }
@@ -83,14 +151,16 @@ pipeline {
             echo 'This will always run after all stages.'
         }
         success {
-            mail to: "angelo.mouzouris@gmail.com",
-                 subject: "Pipeline Success",
-                 body: "The pipeline completed successfully."
+            emailext attachLog: true,
+                     to: "angelo.mouzouris@gmail.com",
+                     subject: "Pipeline Success",
+                     body: "The pipeline completed successfully. Check the attached log for details."
         }
         failure {
-            mail to: "angelo.mouzouris@gmail.com",
-                 subject: "Pipeline Failure",
-                 body: "The pipeline failed."
+            emailext attachLog: true,
+                     to: "angelo.mouzouris@gmail.com",
+                     subject: "Pipeline Failure",
+                     body: "The pipeline failed. Check the attached log for details."
         }
     }
 }
